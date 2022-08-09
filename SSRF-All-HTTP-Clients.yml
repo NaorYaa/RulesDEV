@@ -5,7 +5,8 @@ rules:
       message: SSRF via serverless http.client
       mode: taint
       pattern-sanitizers:
-        - pattern: squid
+        - pattern-regex: ^.*getSquidProxyConfig.*$
+        - pattern-regex: ^.*http.*$
       pattern-sinks:
         - pattern: fetch(...)
         - pattern: httpClient.$BLA(...) 
