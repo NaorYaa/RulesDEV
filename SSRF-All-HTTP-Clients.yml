@@ -6,7 +6,6 @@ rules:
       mode: taint
       pattern-sanitizers:
         - pattern-regex: ^.*getSquidProxyConfig.*$
-        - pattern-regex: ^.*http.*$
       pattern-sinks:
         - pattern: fetch(...)
         - pattern: httpClient.$BLA(...) 
