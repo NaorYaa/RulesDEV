@@ -5,17 +5,36 @@ rules:
       message: SSRF via serverless http.client
       mode: taint
       pattern-sanitizers:
-        - pattern-regex: ^.*getSquidProxyConfig.*$
+        - patterns:
+          - pattern-inside: $CLIENT.$METHOD($URL, ...)
+          - metavariable-regex:
+              metavariable: $URL
+              regex: \W*(http)\W*
+        - patterns:
+          - pattern-inside: $CLIENT($URL, ...)
+          - metavariable-regex:
+              metavariable: $URL
+              regex: \W*(http)\W*
+        - patterns:
+          - pattern-regex: ^.*getSquidProxyConfig.*$
+        - patterns:
+          - pattern-regex: ^.*squid.security.*$
+        - patterns:
+          - pattern-inside: |
+                  $VAR = {"$URI": "$SOMEURL", "method": "$METHOD", "proxy": "$SQUID",}
+          - metavariable-regex:
+              metavariable: $SQUID
+              regex: \W*(squid.security)\W*
       pattern-sinks:
         - pattern: fetch(...)
-        - pattern: httpClient.$BLA(...) 
-        - pattern: http.$BLA(...)
-        - pattern: https.$BLA(...)
-        - pattern: got.$BLA(...)
-        - pattern: superagent.$BLA(...)
-        - pattern: axios.$BLA(...)
+        - pattern: httpClient.$METHOD(...) 
+        - pattern: http.$METHOD(...)
+        - pattern: https.$METHOD(...)
+        - pattern: got.$METHOD(...)
+        - pattern: superagent.$METHOD(...)
+        - pattern: axios.$METHOD(...)
       pattern-sources:
         - patterns:
           - pattern-either:
               - pattern: req
-      severity: WARNING
+      severity: ERROR
