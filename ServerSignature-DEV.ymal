@@ -1,0 +1,16 @@
+rules:
+  - id: auth_bypass_detection
+    pattern-either:
+      - patterns:
+        - pattern-inside: |
+              const $VAR = await $VULN(...);
+        - metavariable-regex:
+            metavariable: $VULN
+            regex: (addServerSignature)
+      - pattern: addServerSignature
+      - pattern: ctx.apiGatewayClient.addServerSignature(...)
+      - pattern: ctx.apiGatewayClient.signWith(...)
+    message: addServerSignature Usage Found
+    languages:
+      - javascript
+    severity: ERROR
